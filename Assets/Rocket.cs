@@ -8,9 +8,11 @@ public class Rocket : MonoBehaviour {
     Rigidbody rigidBody;
     AudioSource audiosource;
 
+    [SerializeField] float rcsThrust = 75f;
+    [SerializeField] float linThrust = 75f;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         rigidBody = GetComponent<Rigidbody>();
         audiosource = GetComponent<AudioSource>();
 	}
@@ -25,16 +27,16 @@ public class Rocket : MonoBehaviour {
     private void Rotate()
     {
         rigidBody.freezeRotation = true;  //take manual control of rotation
+        
+        float rotationThisFrame = rcsThrust * Time.deltaTime;
 
         if (Input.GetKey(KeyCode.A))
         {
-            print("Rotating Left");
-            transform.Rotate(Vector3.forward);
+            transform.Rotate(Vector3.forward * rotationThisFrame);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            print("Rotating Right");
-            transform.Rotate(-Vector3.forward);
+            transform.Rotate(-Vector3.forward * rotationThisFrame);
         }
 
         rigidBody.freezeRotation = false; //resume physics control
@@ -42,10 +44,10 @@ public class Rocket : MonoBehaviour {
 
     private void Thrust()
     {
-        if (Input.GetKey(KeyCode.Space))    //can thrust while rotating
+        if (Input.GetKey(KeyCode.W))    //can thrust while rotating
         {
-            print("Thrusting");
-            rigidBody.AddRelativeForce(Vector3.up);
+            float thrustThisFrame = linThrust * Time.deltaTime;
+            rigidBody.AddRelativeForce(Vector3.up * thrustThisFrame);
             if (!audiosource.isPlaying)
             {
                 audiosource.Play();
