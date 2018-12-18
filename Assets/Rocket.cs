@@ -1,7 +1,11 @@
-﻿using System;
+﻿using System;                           //namespaces are similar to libraries
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
+
+//todo fix lighting bug
 
 public class Rocket : MonoBehaviour {
 
@@ -68,13 +72,15 @@ public class Rocket : MonoBehaviour {
                 //do nothing
                 print("ok"); // todo remove
                 break;
-            case "Fuel":
+            case "Finish":
                 //do nothing
-                print("ok"); // todo remove
+                print("Hit Finish"); // todo remove
+                SceneManager.LoadScene(1);
                 break;
             default:
                 // destroy it
                 print("dead");
+                SceneManager.LoadScene(0);
                 break;
         }
             
