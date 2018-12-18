@@ -17,6 +17,9 @@ public class Rocket : MonoBehaviour {
 
     [SerializeField] float rcsThrust = 75f;
     [SerializeField] float linThrust = 75f;
+    [SerializeField] AudioClip mainEngine;
+    [SerializeField] AudioClip Death;
+    [SerializeField] AudioClip levelup;
 
     // Use this for initialization
     void Start () {
@@ -25,15 +28,12 @@ public class Rocket : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
         if (state == State.Alive)
         {
             Thrust();
             Rotate();
-        }
-        else
-        {
-            audiosource.Stop();
         }
     }
 
@@ -59,17 +59,23 @@ public class Rocket : MonoBehaviour {
     {
         if (Input.GetKey(KeyCode.Space))    //can thrust while rotating
         {
-            float thrustThisFrame = linThrust * Time.deltaTime;
-            rigidBody.AddRelativeForce(Vector3.up * thrustThisFrame);
-            if (!audiosource.isPlaying)
-            {
-                audiosource.Play();
-            }
+            ApplyThrust();
 
         }
         else
         {
             audiosource.Stop();
+            
+        }
+    }
+
+    private void ApplyThrust()
+    {
+        float thrustThisFrame = linThrust * Time.deltaTime;
+        rigidBody.AddRelativeForce(Vector3.up * thrustThisFrame);
+        if (!audiosource.isPlaying)
+        {
+            audiosource.PlayOneShot(mainEngine);
         }
     }
 
@@ -85,11 +91,15 @@ public class Rocket : MonoBehaviour {
                 break;
             case "Finish":
                 state = State.Transcending;
+                audiosource.Stop();
+                audiosource.PlayOneShot(levelup);
                 Invoke("LoadNextLevel", 1f);
                 break;
             default:
                 // destroy it
                 state = State.Dying;
+                audiosource.Stop();
+                audiosource.PlayOneShot(Death);
                 Invoke("LoadFirstLevel",2f);
                 break;
         }
@@ -106,5 +116,6 @@ public class Rocket : MonoBehaviour {
     {
         SceneManager.LoadScene(1); //todo allow for more than 2 levels
         state = State.Alive;
+        audiosource.PlayOneShot(levelup);
     }
 }
