@@ -12,6 +12,9 @@ public class Rocket : MonoBehaviour {
     Rigidbody rigidBody;
     AudioSource audiosource;
 
+    enum State { Alive, Dying, Transcending };
+    State state = State.Alive;
+
     [SerializeField] float rcsThrust = 75f;
     [SerializeField] float linThrust = 75f;
 
@@ -23,9 +26,15 @@ public class Rocket : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Thrust();
-        Rotate();
-
+        if (state == State.Alive)
+        {
+            Thrust();
+            Rotate();
+        }
+        else
+        {
+            audiosource.Stop();
+        }
     }
 
     private void Rotate()
@@ -48,7 +57,7 @@ public class Rocket : MonoBehaviour {
 
     private void Thrust()
     {
-        if (Input.GetKey(KeyCode.W))    //can thrust while rotating
+        if (Input.GetKey(KeyCode.Space))    //can thrust while rotating
         {
             float thrustThisFrame = linThrust * Time.deltaTime;
             rigidBody.AddRelativeForce(Vector3.up * thrustThisFrame);
@@ -66,6 +75,8 @@ public class Rocket : MonoBehaviour {
 
     void OnCollisionEnter(Collision collision)
     {
+        if (state != State.Alive){ return; }
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
@@ -73,17 +84,27 @@ public class Rocket : MonoBehaviour {
                 print("ok"); // todo remove
                 break;
             case "Finish":
-                //do nothing
-                print("Hit Finish"); // todo remove
-                SceneManager.LoadScene(1);
+                state = State.Transcending;
+                Invoke("LoadNextLevel", 1f);
                 break;
             default:
                 // destroy it
-                print("dead");
-                SceneManager.LoadScene(0);
+                state = State.Dying;
+                Invoke("LoadFirstLevel",2f);
                 break;
         }
             
     }
 
+    private void LoadFirstLevel()
+    {
+        SceneManager.LoadScene(0);
+        state = State.Alive;
+    }
+
+    private void LoadNextLevel()
+    {
+        SceneManager.LoadScene(1); //todo allow for more than 2 levels
+        state = State.Alive;
+    }
 }

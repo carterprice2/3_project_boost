@@ -457,7 +457,13 @@ Prefab:
       propertyPath: m_Name
       value: Rocket Ship
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 82622093677099404, guid: b89b5fcbb331c1948a6c029c81891a7c,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 82622093677099404, guid: b89b5fcbb331c1948a6c029c81891a7c, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: b89b5fcbb331c1948a6c029c81891a7c, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &413582200
@@ -1235,7 +1241,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4149187445233640, guid: 069cbef78dbd93942b56fcc8dfd3b166, type: 2}
       propertyPath: m_LocalScale.y
-      value: 12.501266
+      value: 7.167357
       objectReference: {fileID: 0}
     - target: {fileID: 4149187445233640, guid: 069cbef78dbd93942b56fcc8dfd3b166, type: 2}
       propertyPath: m_LocalScale.z
@@ -1618,6 +1624,10 @@ Prefab:
     - target: {fileID: 4067630452725708, guid: 59aec70919670ac42be6ff35ee48dd1e, type: 2}
       propertyPath: m_RootOrder
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4067630452725708, guid: 59aec70919670ac42be6ff35ee48dd1e, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 8.695896
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 59aec70919670ac42be6ff35ee48dd1e, type: 2}
