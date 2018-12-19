@@ -7,7 +7,8 @@ using UnityEngine.SceneManagement;
 
 //todo fix lighting bug
 
-public class Rocket : MonoBehaviour {
+public class Rocket : MonoBehaviour
+{
 
     Rigidbody rigidBody;
     AudioSource audiosource;
@@ -17,9 +18,15 @@ public class Rocket : MonoBehaviour {
 
     [SerializeField] float rcsThrust = 75f;
     [SerializeField] float linThrust = 75f;
+    [SerializeField] float levelLoadDelay = 2f;
+
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip Death;
     [SerializeField] AudioClip levelup;
+
+    [SerializeField] ParticleSystem mainEngineParticles;
+    [SerializeField] ParticleSystem successParticles;
+    [SerializeField] ParticleSystem deathParticles;
 
     // Use this for initialization
     void Start () {
@@ -34,6 +41,10 @@ public class Rocket : MonoBehaviour {
         {
             Thrust();
             Rotate();
+        }
+        else
+        {
+            mainEngineParticles.Stop();
         }
     }
 
@@ -65,6 +76,7 @@ public class Rocket : MonoBehaviour {
         else
         {
             audiosource.Stop();
+            mainEngineParticles.Stop();
             
         }
     }
@@ -77,6 +89,7 @@ public class Rocket : MonoBehaviour {
         {
             audiosource.PlayOneShot(mainEngine);
         }
+        mainEngineParticles.Play();
     }
 
     void OnCollisionEnter(Collision collision)
@@ -86,24 +99,34 @@ public class Rocket : MonoBehaviour {
         switch (collision.gameObject.tag)
         {
             case "Friendly":
-                //do nothing
-                print("ok"); // todo remove
                 break;
             case "Finish":
-                state = State.Transcending;
-                audiosource.Stop();
-                audiosource.PlayOneShot(levelup);
-                Invoke("LoadNextLevel", 1f);
+                StartSuccessSequence();
                 break;
             default:
-                // destroy it
-                state = State.Dying;
-                audiosource.Stop();
-                audiosource.PlayOneShot(Death);
-                Invoke("LoadFirstLevel",2f);
+                StartDeathSequence();
                 break;
         }
             
+    }
+
+    private void StartDeathSequence()
+    {
+        // destroy it
+        state = State.Dying;
+        audiosource.Stop();
+        audiosource.PlayOneShot(Death);
+        deathParticles.Play();
+        Invoke("LoadFirstLevel", levelLoadDelay);
+    }
+
+    private void StartSuccessSequence()
+    {
+        state = State.Transcending;
+        audiosource.Stop();
+        audiosource.PlayOneShot(levelup);
+        successParticles.Play();
+        Invoke("LoadNextLevel", levelLoadDelay);
     }
 
     private void LoadFirstLevel()
