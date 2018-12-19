@@ -15,6 +15,11 @@ public class Rocket : MonoBehaviour
 
     enum State { Alive, Dying, Transcending };
     State state = State.Alive;
+    int level = 0;
+    const int max_level = 3;
+
+    //debug variables
+    bool collisionON = true;
 
     [SerializeField] float rcsThrust = 75f;
     [SerializeField] float linThrust = 75f;
@@ -37,6 +42,11 @@ public class Rocket : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+        if (Debug.isDebugBuild)
+        {
+            Debugger();
+        }
+
         if (state == State.Alive)
         {
             Thrust();
@@ -45,6 +55,22 @@ public class Rocket : MonoBehaviour
         else
         {
             mainEngineParticles.Stop();
+        }
+    }
+
+    private void Debugger()
+    {
+        //advance level
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+
+        //toggle collision detection
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            collisionON = !collisionON;  //toggle collisions
+            print(collisionON);
         }
     }
 
@@ -94,7 +120,7 @@ public class Rocket : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (state != State.Alive){ return; }
+        if (state != State.Alive) { return; }
 
         switch (collision.gameObject.tag)
         {
@@ -104,10 +130,13 @@ public class Rocket : MonoBehaviour
                 StartSuccessSequence();
                 break;
             default:
-                StartDeathSequence();
+                if (collisionON == true)
+                {
+                    StartDeathSequence();
+                }
+                        
                 break;
         }
-            
     }
 
     private void StartDeathSequence()
@@ -131,13 +160,21 @@ public class Rocket : MonoBehaviour
 
     private void LoadFirstLevel()
     {
-        SceneManager.LoadScene(0);
+        level = 0;
+        SceneManager.LoadScene(level);
         state = State.Alive;
     }
 
     private void LoadNextLevel()
     {
-        SceneManager.LoadScene(1); //todo allow for more than 2 levels
+        level = level + 1;
+        print("level");
+        print(level);
+        if (level > max_level)
+        {
+            level = max_level;
+        }
+        SceneManager.LoadScene(level); //todo allow for more than 2 levels
         state = State.Alive;
         audiosource.PlayOneShot(levelup);
     }
