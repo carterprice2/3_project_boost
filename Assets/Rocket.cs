@@ -16,7 +16,6 @@ public class Rocket : MonoBehaviour
     enum State { Alive, Dying, Transcending };
     State state = State.Alive;
     int level = 0;
-    const int max_level = 3;
 
     //debug variables
     bool collisionON = true;
@@ -167,15 +166,17 @@ public class Rocket : MonoBehaviour
 
     private void LoadNextLevel()
     {
-        level = level + 1;
-        print("level");
-        print(level);
-        if (level > max_level)
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;
+        int max_level = SceneManager.sceneCountInBuildSettings;
+
+        if (nextSceneIndex >= max_level)
         {
-            level = max_level;
+            nextSceneIndex = 0;
         }
-        SceneManager.LoadScene(level); //todo allow for more than 2 levels
+        SceneManager.LoadScene(nextSceneIndex); //todo allow for more than 2 levels
         state = State.Alive;
         audiosource.PlayOneShot(levelup);
     }
+        
 }
